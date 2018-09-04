@@ -144,3 +144,5 @@ xclassifier.predict(X_test)
 xscore=xclassifier.score(X_test,y_test)
 xscore
 print('score with XGBoost is ',+ str(xscore))
+
+# So Random Forest gave the best accuracy score of 98.52%

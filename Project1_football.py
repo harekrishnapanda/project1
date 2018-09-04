@@ -17,6 +17,29 @@ from math import sqrt
 cnx = sqlite3.connect('database.sqlite')
 df = pd.read_sql_query("SELECT * FROM Player_Attributes", cnx)
 
+# To see the data co relation matrix
+#df.corr(method = 'pearson')
+#df.corr(method = 'kendall')
+df.corr(method = 'spearman')
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+from matplotlib import style
+import numpy
+df1 = df.iloc[:,5:42]
+corelations =df1.corr()
+fig=plt.figure()
+ax = fig.add_subplot(111)
+cax = ax.matshow(corelations, vmin=-1,vmax=1)
+fig.colorbar(cax)
+ticks=numpytarange(0,37,1)
+ax.set_xticks(ticks)
+ax.set_yticks(ticks)
+ax.set_xticklabels(names)
+ax.set_yticklabels(names)
+plt.show()
+
+
 # Using user definded function for data cleansing
 from data_preprocessing import data_cleaning
 df= data_cleaning(df)

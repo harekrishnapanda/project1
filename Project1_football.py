@@ -22,6 +22,7 @@ df = pd.read_sql_query("SELECT * FROM Player_Attributes", cnx)
 #df.corr(method = 'kendall')
 df.corr(method = 'spearman')
 
+# plotting the co-relation matirx excluding the first 5 columns
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib import style
@@ -40,7 +41,8 @@ ax.set_yticklabels(names)
 plt.show()
 # Since no two columns are highly co related, we can't remove any column
 
-# Using user definded function for data cleansing
+# calling the user definded (data_cleaning)function for data cleansing
+# data_cleaning function code is uploaded in another script in the same respository
 from data_preprocessing import data_cleaning
 df= data_cleaning(df)
 
@@ -50,14 +52,13 @@ X1 = df.iloc[:,5]
 X2 = df.iloc[:,9:]
 X3 = df.iloc[:,[6,7,8]]
 X4 = pd.concat([X1,X2],axis=1)
-# creatin Y axis data
+# Splitting Y axis data from the main dataframe
 y = df['overall_rating']
 #X3.describe(include='all')
 
-# Label encoding of categorical data
+# Label encoding of categorical features
 from sklearn.preprocessing import LabelEncoder,OneHotEncoder
 lblenc=LabelEncoder()
-
 #sys.setrecursionlimit(200000)
 X3['preferred_foot']=lblenc.fit_transform(X3['preferred_foot'].astype(str))
 X3['defensive_work_rate']=lblenc.fit_transform(X3['defensive_work_rate'].astype(str))
@@ -78,27 +79,29 @@ regressor_sma.summary()
 X = pd.DataFrame(X)
 X= X.drop([1],axis=1)
 
-# Train_set and Test set data split
+# Train_set and Test_set data split for model
 from sklearn.cross_validation import train_test_split
 X_train,X_test,y_train,y_test=train_test_split(X,y,train_size=0.90,random_state=0)
 
-# Linear Regression
+# Linear Regression model
 from sklearn.linear_model import LinearRegression
 lr=LinearRegression()
 lr.fit(X_train,y_train)
 lr.predict(X_test)
 lrscore=lr.score(X_test,y_test)
 lrscore
-print('score with XGBoost is ', str(lrscore))
-# Decission Tree Regression
+print('score with Linear Regression is ', str(lrscore))
+
+# Decission Tree Regression model
 from sklearn.tree import DecisionTreeRegressor
 dtr=DecisionTreeRegressor()
 dtr.fit(X_train,y_train)
 y_pred= dtr.predict(X_test)
 dtrscore=dtr.score(X_test,y_test)
 dtrscore
+print('score with Decission Tree Regression is ', str(dtrscore))
 
-#Random Forest Regression
+#Random Forest Regression model
 # to get the optimum number of Trees
 from sklearn.ensemble import RandomForestRegressor
 from collections import OrderedDict
@@ -125,6 +128,7 @@ plt.ylabel("OOB error rate")
 plt.legend(loc="upper right")
 plt.show()
 
+# Applying the Random Forest regression model
 from sklearn.ensemble import RandomForestRegressor
 rf=RandomForestRegressor(n_estimators=200, random_state=0)
 rf.fit(X_train,y_train)

@@ -17,7 +17,7 @@ from math import sqrt
 cnx = sqlite3.connect('database.sqlite')
 df = pd.read_sql_query("SELECT * FROM Player_Attributes", cnx)
 
-# To see the data co relation matrix
+# To see the data co relation matrix to figure out if any two columns are similarly impacting the ouput
 #df.corr(method = 'pearson')
 #df.corr(method = 'kendall')
 df.corr(method = 'spearman')
@@ -38,7 +38,7 @@ ax.set_yticks(ticks)
 ax.set_xticklabels(names)
 ax.set_yticklabels(names)
 plt.show()
-
+# Since no two columns are highly co related, we can't remove any column
 
 # Using user definded function for data cleansing
 from data_preprocessing import data_cleaning
@@ -67,15 +67,14 @@ X3['attacking_work_rate']=lblenc.fit_transform(X3['attacking_work_rate'].astype(
 # Merging of categorical and Numerical features
 X = pd.concat([X3,X4],axis=1)
 
-#Backword Elimination
+#Backword Elimination to see if we can eliminate some fetures based on P value
 import numpy as np
 import statsmodels.formula.api as sma
 X = np.append(arr = np.ones((176161,1)).astype(int),values = X, axis=1 )
-
 regressor_sma = sma.OLS(endog=y, exog=X).fit()
 regressor_sma.summary()
 
-#Eliminating the columns based on Backward elimination result
+#Eliminating the one column based on Backward elimination result
 X = pd.DataFrame(X)
 X= X.drop([1],axis=1)
 
